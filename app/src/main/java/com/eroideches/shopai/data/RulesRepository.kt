@@ -52,6 +52,6 @@ class RulesRepository(private val context: Context, private val http: OkHttpClie
     }
 
     companion object {
-        const val REMOTE_URL = "https://raw.githubusercontent.com/eroideches/ShopAI/main/rules/sites.json"
+        const val REMOTE_URL = "https://raw.githubusercontent.com/Eroideches/shopai/main/rules/sites.json"
     }
 }
