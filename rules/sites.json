@@ -1,0 +1,268 @@
+{
+  "version": 1,
+  "minAppVersion": 1,
+  "updated": "2026-11-21",
+  "sites": [
+    {
+      "id": "amazon", "name": "Amazon", "color": "#FF9900", "group": "Principali",
+      "domains": ["amazon.it"],
+      "searchUrl": "https://www.amazon.it/s?k={q}&language=it_IT",
+      "fetch": "webview",
+      "methods": ["selectors", "structured", "heuristic", "network"],
+      "needsSetup": true, "setupUrl": "https://www.amazon.it/",
+      "setupScript": "(function(){var l=document.getElementById('nav-global-location-popover-link')||document.querySelector('#glow-ingress-block');if(l)l.click();var t=0;var iv=setInterval(function(){var i=document.getElementById('GLUXZipUpdateInput');if(i){i.focus();i.value='{zip}';i.dispatchEvent(new Event('input',{bubbles:true}));i.dispatchEvent(new Event('change',{bubbles:true}));var b=document.querySelector('#GLUXZipUpdate input')||document.querySelector('#GLUXZipUpdate');if(b)b.click();clearInterval(iv);setTimeout(function(){var d=document.querySelector('[name=glowDoneButton], #GLUXConfirmClose, .a-popover-footer input');if(d)d.click();setTimeout(function(){location.reload();},800);},1500);}if(++t>60)clearInterval(iv);},250);})();",
+      "selectors": {
+        "card": "div.s-result-item[data-component-type=s-search-result]",
+        "title": "h2 span, h2",
+        "price": ".a-price:not(.a-text-price) .a-offscreen",
+        "link": "a.a-link-normal[href*='/dp/'], h2 a",
+        "image": "img.s-image",
+        "shipping": "[data-cy=delivery-recipe], .s-align-children-center",
+        "delivery": "[data-cy=delivery-recipe] .a-text-bold, [data-cy=delivery-recipe]",
+        "rating": "span.a-icon-alt",
+        "reviews": "a[href*='customerReviews'] span, span.s-underline-text",
+        "description": "[data-cy=secondary-offer-recipe], .a-color-secondary"
+      },
+      "detail": { "shipping": "#mir-layout-DELIVERY_BLOCK, #deliveryBlockMessage", "delivery": "#mir-layout-DELIVERY_BLOCK-slot-PRIMARY_DELIVERY_MESSAGE_LARGE, #deliveryBlockMessage" },
+      "blockMarkers": ["/errors/validatecaptcha", "inserisci i caratteri che vedi", "type the characters you see"],
+      "enrich": true,
+      "appPackage": "com.amazon.mShop.android.shopping",
+      "shippingHint": "Spedizione: vedi sito (gratis con Prime)"
+    },
+    {
+      "id": "ebay", "name": "eBay", "color": "#0064D2", "group": "Principali",
+      "domains": ["ebay.it"],
+      "searchUrl": "https://www.ebay.it/sch/i.html?_nkw={q}&LH_BIN=1&_stpos={zip}&_fcid=101&_ipg=60",
+      "fetch": "http", "api": "ebay",
+      "methods": ["api", "selectors", "structured", "heuristic"],
+      "selectors": {
+        "card": "li.s-item, li.s-card",
+        "title": ".s-item__title, .s-card__title",
+        "price": ".s-item__price, .s-card__price",
+        "link": "a.s-item__link, a.su-link, a[href*='/itm/']",
+        "image": "img",
+        "shipping": ".s-item__shipping, .s-item__logisticsCost, .s-item__freeXDays, .s-card__attribute-row:contains(spedizione)",
+        "delivery": ".s-item__delivery-date, .s-card__attribute-row:contains(Consegna)",
+        "condition": ".SECONDARY_INFO, .s-card__subtitle",
+        "description": ".s-item__subtitle, .s-card__subtitle"
+      },
+      "enrich": false,
+      "appPackage": "com.ebay.mobile"
+    },
+    {
+      "id": "aliexpress", "name": "AliExpress", "color": "#E62E04", "group": "Principali",
+      "domains": ["aliexpress.com", "aliexpress.it"],
+      "searchUrl": "https://it.aliexpress.com/wholesale?SearchText={q}&shipCountry=it&g=y",
+      "fetch": "webview", "api": "aliexpress",
+      "methods": ["api", "network", "structured", "heuristic"],
+      "cookies": {
+        "aep_usuc_f": "site=ita&c_tp=EUR&region=IT&b_locale=it_IT",
+        "intl_locale": "it_IT",
+        "xman_us_f": "x_locale=it_IT&x_l=0"
+      },
+      "productUrlTemplate": "https://it.aliexpress.com/item/{id}.html",
+      "blockMarkers": ["x5secdata", "_____tmd_____/punish", "slide to verify"],
+      "waitMs": 3500, "scrolls": 3,
+      "enrich": true,
+      "appPackage": "com.alibaba.aliexpresshd"
+    },
+    {
+      "id": "temu", "name": "Temu", "color": "#FB7701", "group": "Principali",
+      "domains": ["temu.com"],
+      "searchUrl": "https://www.temu.com/it/search_result.html?search_key={q}&search_method=user",
+      "fetch": "webview",
+      "methods": ["network", "structured", "heuristic"],
+      "cookies": { "currency": "EUR", "language": "it" },
+      "minorUnits": true,
+      "productUrlTemplate": "https://www.temu.com/it/goods.html?goods_id={id}",
+      "blockMarkers": ["verifica di sicurezza", "security verification"],
+      "waitMs": 4000, "scrolls": 3,
+      "experimental": true, "enrich": true,
+      "appPackage": "com.einnovation.temu"
+    },
+    {
+      "id": "shein", "name": "Shein", "color": "#222222", "group": "Principali",
+      "domains": ["shein.com"],
+      "searchUrl": "https://it.shein.com/pdsearch/{q}/",
+      "fetch": "webview",
+      "methods": ["network", "structured", "heuristic"],
+      "waitMs": 3500, "scrolls": 2,
+      "appPackage": "com.zzkko"
+    },
+    {
+      "id": "tiktok", "name": "TikTok Shop", "color": "#FE2C55", "group": "Principali",
+      "domains": ["tiktok.com"],
+      "searchUrl": "https://www.tiktok.com/shop/s/{q}",
+      "fetch": "webview",
+      "methods": ["network", "structured", "heuristic"],
+      "waitMs": 4500, "scrolls": 2,
+      "experimental": true,
+      "appPackage": "com.zhiliaoapp.musically"
+    },
+    {
+      "id": "mediaworld", "name": "MediaWorld", "color": "#DF0000", "group": "Elettronica",
+      "domains": ["mediaworld.it"],
+      "searchUrl": "https://www.mediaworld.it/it/search.html?query={q}",
+      "fetch": "webview",
+      "methods": ["structured", "network", "heuristic"]
+    },
+    {
+      "id": "unieuro", "name": "Unieuro", "color": "#E4002B", "group": "Elettronica",
+      "domains": ["unieuro.it"],
+      "searchUrl": "https://www.unieuro.it/online/search?q={q}",
+      "fetch": "webview",
+      "methods": ["network", "structured", "heuristic"]
+    },
+    {
+      "id": "euronics", "name": "Euronics", "color": "#003A8C", "group": "Elettronica",
+      "domains": ["euronics.it"],
+      "searchUrl": "https://www.euronics.it/search?q={q}",
+      "fetch": "webview",
+      "methods": ["structured", "network", "heuristic"]
+    },
+    {
+      "id": "eprice", "name": "ePRICE", "color": "#EE7203", "group": "Elettronica",
+      "domains": ["eprice.it"],
+      "searchUrl": "https://www.eprice.it/sa/?qs={q}",
+      "fetch": "http",
+      "methods": ["structured", "heuristic"]
+    },
+    {
+      "id": "backmarket", "name": "Back Market", "color": "#1F1F1F", "group": "Elettronica",
+      "domains": ["backmarket.it"],
+      "searchUrl": "https://www.backmarket.it/it-it/search?q={q}",
+      "fetch": "webview",
+      "methods": ["network", "structured", "heuristic"],
+      "defaultCondition": "REFURBISHED"
+    },
+    {
+      "id": "leroymerlin", "name": "Leroy Merlin", "color": "#78BE20", "group": "Casa",
+      "domains": ["leroymerlin.it"],
+      "searchUrl": "https://www.leroymerlin.it/search?q={q}",
+      "fetch": "webview",
+      "methods": ["structured", "network", "heuristic"]
+    },
+    {
+      "id": "manomano", "name": "ManoMano", "color": "#00A59B", "group": "Casa",
+      "domains": ["manomano.it"],
+      "searchUrl": "https://www.manomano.it/ricerca/{q}",
+      "fetch": "webview",
+      "methods": ["structured", "network", "heuristic"]
+    },
+    {
+      "id": "ikea", "name": "IKEA", "color": "#0058A3", "group": "Casa",
+      "domains": ["ikea.com"],
+      "searchUrl": "https://www.ikea.com/it/it/search/?q={q}",
+      "fetch": "webview",
+      "methods": ["network", "structured", "heuristic"]
+    },
+    {
+      "id": "decathlon", "name": "Decathlon", "color": "#3643BA", "group": "Sport e moda",
+      "domains": ["decathlon.it"],
+      "searchUrl": "https://www.decathlon.it/search?Ntt={q}",
+      "fetch": "webview",
+      "methods": ["structured", "network", "heuristic"]
+    },
+    {
+      "id": "zalando", "name": "Zalando", "color": "#FF6900", "group": "Sport e moda",
+      "domains": ["zalando.it"],
+      "searchUrl": "https://www.zalando.it/catalogo/?q={q}",
+      "fetch": "webview",
+      "methods": ["structured", "network", "heuristic"],
+      "appPackage": "de.zalando.mobile"
+    },
+    {
+      "id": "trovaprezzi", "name": "Trovaprezzi", "color": "#F39200", "group": "Comparatori",
+      "domains": ["trovaprezzi.it"],
+      "searchUrl": "https://www.trovaprezzi.it/categoria.aspx?libera={q}&id=-1&sort=prezzo_totale",
+      "fetch": "http",
+      "methods": ["selectors", "structured", "heuristic"],
+      "selectors": {
+        "card": "li.listing_item, .listing_item",
+        "title": ".item_name, .listing_item_name",
+        "price": ".item_basic_price, .listing_item_price",
+        "link": "a.listing_item_button, a[href*='/goto/'], a",
+        "image": "img",
+        "shipping": ".item_delivery_price, .listing_item_delivery",
+        "description": ".merchant_name, .item_merchant_name"
+      }
+    },
+    {
+      "id": "idealo", "name": "Idealo", "color": "#0A3761", "group": "Comparatori",
+      "domains": ["idealo.it"],
+      "searchUrl": "https://www.idealo.it/MainSearchProductCategory.html?q={q}",
+      "fetch": "http",
+      "methods": ["structured", "heuristic"]
+    },
+    {
+      "id": "subito", "name": "Subito", "color": "#F9423A", "group": "Usato",
+      "domains": ["subito.it"],
+      "searchUrl": "https://www.subito.it/annunci-italia/vendita/usato/?q={q}&shp=true",
+      "fetch": "http",
+      "methods": ["structured", "heuristic"],
+      "defaultEnabled": false, "usedMarket": true, "defaultCondition": "USED",
+      "appPackage": "it.subito"
+    },
+    {
+      "id": "vinted", "name": "Vinted", "color": "#09B1BA", "group": "Usato",
+      "domains": ["vinted.it"],
+      "searchUrl": "https://www.vinted.it/catalog?search_text={q}",
+      "fetch": "webview",
+      "methods": ["network", "structured", "heuristic"],
+      "defaultEnabled": false, "usedMarket": true, "defaultCondition": "USED",
+      "appPackage": "fr.vinted"
+    }
+  ],
+  "guides": [
+    {
+      "siteId": "ebay",
+      "title": "Chiavi API di eBay",
+      "summary": "Gratis. Con le chiavi eBay risponde più in fretta, con la spedizione calcolata sul tuo CAP e senza blocchi.",
+      "fields": [
+        { "id": "ebay_client_id", "label": "App ID (Client ID)", "hint": "es. MarioRos-ShopAI-PRD-1a2b3c4d5-6e7f8a9b" },
+        { "id": "ebay_client_secret", "label": "Cert ID (Client Secret)", "hint": "es. PRD-1a2b3c4d5e6f-7a8b-9c0d-1e2f-3a4b" }
+      ],
+      "steps": [
+        { "text": "Accedi a eBay Developers Program con il tuo account eBay (o creane uno) e accetta i termini.", "link": "https://developer.ebay.com/signin", "linkLabel": "Apri eBay Developers" },
+        { "text": "Conferma l'indirizzo email che ti arriva da eBay." },
+        { "text": "Apri la pagina Application Keys.", "link": "https://developer.ebay.com/my/keys", "linkLabel": "Apri Application Keys" },
+        { "text": "Nella colonna Production scrivi un nome per l'app (es. ShopAI) e premi \"Create a keyset\"." },
+        { "text": "Se eBay chiede le notifiche di cancellazione account (Marketplace Account Deletion), scegli l'esenzione: ShopAI è un'app personale e non salva dati di altri utenti eBay." },
+        { "text": "Copia App ID (Client ID) e Cert ID (Client Secret) della colonna Production e incollali qui sotto. Il Dev ID non serve." },
+        { "text": "Premi Verifica: se vedi ✓ eBay userà l'API." }
+      ],
+      "notes": ["Usa il keyset Production, non Sandbox: quello Sandbox non vede gli annunci veri.", "Limite gratuito: 5.000 ricerche al giorno, più che sufficienti."]
+    },
+    {
+      "siteId": "aliexpress",
+      "title": "Chiavi API di AliExpress",
+      "summary": "Gratis. Con le chiavi AliExpress dà prezzi in € e spedizione verso l'Italia senza CAPTCHA.",
+      "fields": [
+        { "id": "ali_app_key", "label": "App Key", "hint": "numero di 6-8 cifre" },
+        { "id": "ali_app_secret", "label": "App Secret", "hint": "stringa di 32 caratteri" },
+        { "id": "ali_tracking_id", "label": "Tracking ID", "hint": "es. shopai", "secret": false }
+      ],
+      "steps": [
+        { "text": "Iscriviti al programma affiliati AliExpress con il tuo account AliExpress e completa il profilo.", "link": "https://portals.aliexpress.com", "linkLabel": "Apri AliExpress Portals" },
+        { "text": "Nel portale apri Account → Tracking ID e creane uno (es. shopai). Copialo nel campo Tracking ID." },
+        { "text": "Registrati come sviluppatore su AliExpress Open Platform (profilo Affiliate, persona fisica).", "link": "https://openservice.aliexpress.com", "linkLabel": "Apri Open Platform" },
+        { "text": "Da App Console crea un'app di tipo \"Affiliates API\". L'approvazione può richiedere da 1 a qualche giorno lavorativo." },
+        { "text": "Quando l'app è approvata, apri App Overview e copia App Key e App Secret qui sotto." },
+        { "text": "Premi Verifica: se vedi ✓ AliExpress userà l'API." }
+      ],
+      "notes": ["Finché l'app non è approvata la verifica risponde \"app non ancora approvata\": intanto ShopAI legge AliExpress dalla pagina."]
+    },
+    {
+      "siteId": "amazon",
+      "title": "Amazon (nessuna chiave per ora)",
+      "summary": "Amazon viene letto dalla pagina: non serve nessuna chiave. Imposta solo il CAP con \"Prepara\".",
+      "fields": [],
+      "steps": [
+        { "text": "Impostazioni → Siti → Amazon → Prepara: si apre Amazon, ShopAI inserisce il CAP e salva i cookie.", "linkLabel": "" },
+        { "text": "Se Amazon mostra un CAPTCHA, risolvilo una volta: i cookie restano salvati." },
+        { "text": "Facoltativo, più avanti: l'API ufficiale di Amazon è riservata agli affiliati che hanno già fatto alcune vendite con i propri link.", "link": "https://programma-affiliazione.amazon.it", "linkLabel": "Programma affiliazione Amazon" }
+      ],
+      "notes": []
+    }
+  ]
+}

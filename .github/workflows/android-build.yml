@@ -1,0 +1,89 @@
+# Compila ShopAI a ogni push su main: test del modulo core, APK release firmato, release "latest" su GitHub.
+# La repo è pubblica: i minuti di GitHub Actions sono gratuiti.
+# Firma: secrets SHOPAI_KEYSTORE_B64 / SHOPAI_KEYSTORE_PASSWORD (oppure gli stessi CPP_* di Camera++).
+name: Android Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Gradle (con cache)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Permessi di esecuzione a gradlew
+        run: chmod +x ./gradlew
+
+      - name: Chiave di firma
+        env:
+          KEYSTORE_B64: ${{ secrets.SHOPAI_KEYSTORE_B64 || secrets.CPP_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "SHOPAI_KEYSTORE_FILE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Nessuna chiave di firma nei secrets: l'APK è firmato con una chiave debug (per aggiornare dovrai disinstallare)"
+          fi
+
+      - name: Test del modulo core (prezzi, pertinenza, estrattori, API)
+        run: ./gradlew --no-daemon :core:test
+
+      - name: Compila APK release
+        env:
+          SHOPAI_KEYSTORE_PASSWORD: ${{ secrets.SHOPAI_KEYSTORE_PASSWORD || secrets.CPP_KEYSTORE_PASSWORD }}
+          SHOPAI_KEY_ALIAS: ${{ secrets.SHOPAI_KEY_ALIAS || 'cameraplusplus' }}
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Prepara APK
+        run: |
+          VERSION=$(grep -oP '"versionName"\s*:\s*"\K[^"]+' app/build/outputs/apk/release/output-metadata.json)
+          mkdir -p dist
+          APK=$(ls app/build/outputs/apk/release/*.apk | head -1)
+          cp "$APK" "dist/ShopAI-$VERSION.apk"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          ls -lh dist
+
+      - name: Carica artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShopAI-${{ env.VERSION }}
+          path: dist/*.apk
+          if-no-files-found: error
+
+      - name: Pubblica release "latest"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
+          gh release create latest dist/*.apk --title "ShopAI ${VERSION}" \
+            --notes "Build automatica del commit ${GITHUB_SHA::7}. Installa l'APK sul telefono." --latest
+
+      - name: Report dei test (se fallisce)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: core/build/reports/tests/
+          if-no-files-found: ignore

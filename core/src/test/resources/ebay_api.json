@@ -1,0 +1,4 @@
+{"total":2,"itemSummaries":[
+ {"itemId":"v1|1|0","title":"Apple AirPods Pro 2 USB-C nuovi sigillati","price":{"value":"189.00","currency":"EUR"},"itemWebUrl":"https://www.ebay.it/itm/1234567890","image":{"imageUrl":"https://i.ebayimg.com/images/g/a/s-l500.jpg"},"conditionId":"1000","condition":"Nuovo","seller":{"username":"techstore","feedbackPercentage":"99.2","feedbackScore":"5321"},"shippingOptions":[{"shippingCostType":"FIXED","shippingCost":{"value":"4.90","currency":"EUR"},"maxEstimatedDeliveryDate":"2026-11-27T08:00:00.000Z"}]},
+ {"itemId":"v1|2|0","title":"AirPods Pro 2 Apple MagSafe","price":{"value":"199.90","currency":"EUR"},"itemWebUrl":"https://www.ebay.it/itm/2234567890","conditionId":"1000","shippingOptions":[{"shippingCostType":"FIXED","shippingCost":{"value":"0.00","currency":"EUR"}}]}
+]}
