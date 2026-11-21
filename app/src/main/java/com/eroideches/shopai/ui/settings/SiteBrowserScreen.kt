@@ -44,17 +44,17 @@ import com.eroideches.shopai.data.AppSettings
 @Composable
 fun SiteBrowserScreen(g: AppGraph, siteId: String, onDone: () -> Unit) {
     val rules by g.rules.rules.collectAsState()
-    val settings by g.settings.flow.collectAsState(AppSettings())
+    val appSettings by g.settings.flow.collectAsState(AppSettings())
     val found = rules.site(siteId)
     if (found == null) { androidx.compose.runtime.LaunchedEffect(Unit) { onDone() }; return }
     val rule = found
     var progress by remember { mutableIntStateOf(0) }
     var scriptRun by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf(
-        if (rule.setupScript != null) "Accetta i cookie. ShopAI imposta da solo il CAP ${settings.zip}: se non succede, toccane l'indicatore in alto e inseriscilo tu."
+        if (rule.setupScript != null) "Accetta i cookie. ShopAI imposta da solo il CAP ${appSettings.zip}: se non succede, toccane l'indicatore in alto e inseriscilo tu."
         else "Accetta i cookie e, se compare, risolvi la verifica. Poi tocca Fatto.",
     ) }
-    val startUrl = rule.setupUrl ?: rule.searchUrlFor("cuffie bluetooth", settings.zip)
+    val startUrl = rule.setupUrl ?: rule.searchUrlFor("cuffie bluetooth", appSettings.zip)
 
     DisposableEffect(Unit) { onDispose { CookieManager.getInstance().flush() } }
 
@@ -87,8 +87,8 @@ fun SiteBrowserScreen(g: AppGraph, siteId: String, onDone: () -> Unit) {
                             val script = rule.setupScript
                             if (script != null && !scriptRun) {
                                 scriptRun = true
-                                view.evaluateJavascript(script.replace("{zip}", settings.zip), null)
-                                info = "CAP ${settings.zip} inviato al sito. Controlla in alto che compaia \"$siteNameHint\" e poi tocca Fatto."
+                                view.evaluateJavascript(script.replace("{zip}", appSettings.zip), null)
+                                info = "CAP ${appSettings.zip} inviato al sito. Controlla in alto che compaia \"$siteNameHint\" e poi tocca Fatto."
                             }
                         }
                         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {

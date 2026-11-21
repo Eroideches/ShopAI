@@ -54,8 +54,9 @@ class SiteSearcher(
     private suspend fun doSearch(rule: SiteRule, query: String, zip: String, condition: ConditionFilter, url: String?): SiteOutcome {
         val t0 = System.currentTimeMillis()
         var apiError: String? = null
-        if (url == null && rule.api != null && Method.API in rule.methods && api.hasKeys(rule.api)) {
-            val r = api.search(rule.api, rule, query, zip, condition)
+        val apiName = rule.api
+        if (url == null && apiName != null && Method.API in rule.methods && api.hasKeys(apiName)) {
+            val r = api.search(apiName, rule, query, zip, condition)
             r.getOrNull()?.let { offers ->
                 return SiteOutcome(rule.id, offers.map { fixCondition(it, rule) }, "api", false, false, null, System.currentTimeMillis() - t0)
             }
